@@ -4,7 +4,11 @@ import hikari.destination.Irumine;
 import hikari.destination.utils.AWT;
 import hikari.destination.utils.Info;
 
+@SuppressWarnings("unused")
 public class Sys {
+    private Sys() {
+    }
+
     public static String getVersion() {
         return Irumine.IrumineVer;
     }

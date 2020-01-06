@@ -6,6 +6,7 @@ import java.lang.instrument.Instrumentation;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("all")
 public class Irumine {
     public static Map<String, String> hioriMap = new HashMap<>();
     public static Map<String, String> hioriReverseMap = new HashMap<>();
@@ -16,11 +17,27 @@ public class Irumine {
         hioriReverseMap.put(v, k);
     }
 
-    static {
-        hioriPut("org/lwjgl/Sys", "hikari/destination/lwjgl/Sys");
+    private static void hioriDirectPut(String name) {
+        hioriPut("org/lwjgl/" + name, "hikari/destination/lwjgl/" + name);
     }
 
-    public static final String IrumineVer = "1.14.5.14";
+    public static String hioriBackIfNecessary(String current) {
+        if (hioriReverseMap.containsKey(current))
+            return hioriReverseMap.get(current);
+        return current;
+    }
+
+    static {
+        hioriDirectPut("Sys");
+//        hioriDirectPut("LWJGLException");
+//        hioriDirectPut("ContextAttribs");
+        hioriDirectPut("opengl/Display");
+//        hioriDirectPut("opengl/DisplayMode");
+//        hioriDirectPut("Drawable");
+//        hioriDirectPut("");
+    }
+
+    public static final String IrumineVer = "3.2.3"; // org.lwjgl.Version.getVersion();
 
     public static void premain(String args, Instrumentation inst) {
         inst.addTransformer(new Hiori(), true);
