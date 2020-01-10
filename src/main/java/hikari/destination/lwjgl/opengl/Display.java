@@ -1,13 +1,11 @@
 package hikari.destination.lwjgl.opengl;
 
 import hikari.destination.hitomi.HitomiDisplay;
-import hikari.destination.hitomi.HitomiMonitor;
+import hikari.destination.hitomi.HitomiLock;
 import org.lwjgl.*;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.PixelFormat;
-import org.lwjgl.opengl.PixelFormatLWJGL;
+import org.lwjgl.glfw.GLFWImage;
+import org.lwjgl.opengl.*;
 
 import javax.naming.InsufficientResourcesException;
 import java.nio.ByteBuffer;
@@ -20,7 +18,7 @@ public final class Display {
     }
 
     public static DisplayMode[] getAvailableDisplayModes() {
-        return HitomiMonitor.fromGLFWVidMode(HitomiMonitor.getVideoModes());
+        return HitomiDisplay.getAvailableDisplayModes();
     }
 
     public static DisplayMode getDesktopDisplayMode() {
@@ -70,9 +68,16 @@ public final class Display {
     }
 
     public static void setTitle(String newTitle) {
-        // FIXME: Delay setting title
-        HitomiDisplay.title = newTitle;
-//        GLFW.glfwSetWindowTitle(HitomiDisplay.window, newTitle);
+        synchronized (HitomiLock.lock) {
+            // FIXME: Delay setting title
+            if (newTitle == null)
+                newTitle = "";
+            HitomiDisplay.title = newTitle;
+
+            if (isCreated()) {
+                GLFW.glfwSetWindowTitle(HitomiDisplay.window, newTitle);
+            }
+        }
     }
 
     public static boolean isCloseRequested() {
@@ -171,7 +176,9 @@ public final class Display {
 
     @SuppressWarnings("all")
     public static boolean isCreated() {
-        return HitomiDisplay.isCreated;
+        synchronized (HitomiLock.lock) {
+            return HitomiDisplay.isCreated;
+        }
     }
 
     @SuppressWarnings("all")
@@ -198,11 +205,15 @@ public final class Display {
     }
 
     public static int setIcon(ByteBuffer[] icons) throws InsufficientResourcesException {
-        // FIXME: Delay setting title
-        if (icons.length < 1)
-            throw new InsufficientResourcesException("At lease one icon is needed!");
-//        GLFW.glfwSetWindowIcon(HitomiDisplay.window, new GLFWImage.Buffer(icons[0]));
-        return icons.length;
+        synchronized (HitomiLock.lock) {
+            // FIXME: Delay setting title
+            if (icons.length < 1)
+                throw new InsufficientResourcesException("At lease one icon is needed!");
+            if (isCreated()) {
+                GLFW.glfwSetWindowIcon(HitomiDisplay.window, new GLFWImage.Buffer(icons[0]));
+            }
+            return icons.length;
+        }
     }
 
     public static void setResizable(boolean resizable) {

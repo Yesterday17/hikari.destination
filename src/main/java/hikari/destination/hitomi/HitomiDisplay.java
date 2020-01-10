@@ -3,9 +3,6 @@ package hikari.destination.hitomi;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
-
-
 public class HitomiDisplay {
     // Window Information
     public static String title;
@@ -21,12 +18,19 @@ public class HitomiDisplay {
 
     // Window Relation
     public static long window;
-    public static Canvas parent;
     public static DisplayMode initialMode;
     public static DisplayMode currentMode;
 
     // FPS
     private static long variableYieldTime, lastTime;
+
+    public static DisplayMode[] getAvailableDisplayModes() {
+        DisplayMode[] modes = HitomiMonitor.fromGLFWVidMode(HitomiMonitor.getVideoModes());
+        if (initialMode == null) {
+            initialMode = currentMode = modes[0];
+        }
+        return modes;
+    }
 
     public static void setDisplayModeAndFullscreenInternal(boolean fullscreen, DisplayMode mode) {
         if (mode == null)
@@ -51,7 +55,6 @@ public class HitomiDisplay {
      * @author kappa (On the LWJGL Forums)
      */
     public static void sync(int fps) {
-        // TODO
         if (fps <= 0) return;
 
         long sleepTime = 1000000000 / fps; // nanoseconds to sleep this frame

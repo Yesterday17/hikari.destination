@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package hikari.destination.lwjgl.opengl;
+package org.lwjgl.opengl;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.PointerBuffer;
