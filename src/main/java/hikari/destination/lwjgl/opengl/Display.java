@@ -148,8 +148,26 @@ public final class Display {
     }
 
     @SuppressWarnings("all")
-    public static void create(PixelFormat pixel_format, Drawable shared_drawable, ContextAttribs attribs) throws LWJGLException {
-        // TODO
+    public static void create(PixelFormat pixel_format, Drawable shared_drawable, ContextAttribs attr) throws LWJGLException {
+        synchronized (HitomiLock.lock) {
+            if (attr != null) {
+                GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, attr.getMajorVersion());
+                GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, attr.getMinorVersion());
+            }
+            if (!GLFW.glfwInit()) {
+                throw new IllegalStateException("Unable to initialize GLFW");
+            }
+            GLFW.glfwDefaultWindowHints();
+            GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_TRUE);
+            HitomiDisplay.window = GLFW.glfwCreateWindow(HitomiDisplay.currentMode.getWidth(), HitomiDisplay.currentMode.getHeight(), "hikari.destination", 0, 0);
+            if (HitomiDisplay.window == 0) {
+                throw new RuntimeException("Failed to create window");
+            }
+
+            GLFW.glfwMakeContextCurrent(HitomiDisplay.window);
+            HitomiDisplay.capabilities = GL.createCapabilities();
+            GLFW.glfwShowWindow(HitomiDisplay.window);
+        }
     }
 
     public static void create(PixelFormatLWJGL pixel_format) throws LWJGLException {
@@ -171,7 +189,6 @@ public final class Display {
 
     @Deprecated
     public static void setInitialBackground(float red, float green, float blue) {
-        // TODO
     }
 
     @SuppressWarnings("all")

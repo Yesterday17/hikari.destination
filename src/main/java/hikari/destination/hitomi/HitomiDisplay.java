@@ -2,6 +2,7 @@ package hikari.destination.hitomi;
 
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GLCapabilities;
 
 public class HitomiDisplay {
     // Window Information
@@ -20,6 +21,9 @@ public class HitomiDisplay {
     public static long window;
     public static DisplayMode initialMode;
     public static DisplayMode currentMode;
+
+    // GL Status
+    public static GLCapabilities capabilities;
 
     // FPS
     private static long variableYieldTime, lastTime;
